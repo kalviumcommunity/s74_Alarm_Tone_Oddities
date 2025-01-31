@@ -5,7 +5,7 @@ app.get("/ping", (req, res) => {
   res.send("pong");
 });
 
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;  // Use process.env.PORT for dynamic environments
 app.listen(PORT, () => {
-  console.log(Server running on http://localhost:${PORT});
+  console.log(`Server running on http://localhost:${PORT}`); // Fixed string interpolation
 });
