@@ -3,7 +3,7 @@ const router = express.Router();
 const Tone = require("../models/Tone");
 
 // GET: Retrieve all alarm tones
-router.get("/all", async (req, res) => {  // ✅ Add "/all" route
+router.get("/", async (req, res) => {  // ✅ Add "/all" route
     try {
       const tones = await Tone.find();
       res.json(tones);
