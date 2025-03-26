@@ -40,6 +40,24 @@ router.post("/add", async (req, res) => {
   }
 });
 
+// PUT: Update an existing alarm tone by ID
+router.put("/:id", async (req, res) => {
+  try {
+    const { toneName, description, audioFile } = req.body;
+    const updatedTone = await Tone.findByIdAndUpdate(
+      req.params.id,
+      { toneName, description, audioFile },
+      { new: true }
+    );
+    if (!updatedTone) {
+      return res.status(404).json({ error: "Tone not found" });
+    }
+    res.status(200).json({ message: "Tone updated successfully!", updatedTone });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 // DELETE: Remove an alarm tone by ID
 router.delete("/:id", async (req, res) => {
   try {
