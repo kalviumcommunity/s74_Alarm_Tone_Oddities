@@ -4,13 +4,13 @@ import LandingPage from "./components/LandingPage";
 import AlarmTone from "./components/AlarmTone";
 import AlarmToneForm from "./components/AlarmToneForm";
 import EntityList from "./components/EntityList";
-import UpdateEntity from "./components/UpdateEntity ";
+import UpdateEntity from "./components/UpdateEntity";
 
 const App = () => {
   const [tones, setTones] = useState([]);
 
   useEffect(() => {
-    
+
     fetchTones();
   }, []);
 
