@@ -1,27 +1,35 @@
-require("dotenv").config();
 const express = require("express");
-const mongoose = require("mongoose");
 const cors = require("cors");
-
-const toneRoutes = require("./routes/toneRoutes");
-const userRoutes = require("./routes/userRoutes"); // Import user routes
-
+const mongoose = require("mongoose");
+const dotenv = require('dotenv').config();
 const app = express();
-const PORT = process.env.PORT || 5000
-;
+const PORT = 3001;
 
-mongoose
-  .connect(process.env.MONGO_URI)
-  .then(() => console.log("✅ Database Connected Successfully!"))
-  .catch((error) => {
-    console.error("❌ Database Connection Failed:", error.message);
-    process.exit(1);
-  });
-
-app.use(cors());
 app.use(express.json());
+app.use(cors());
 
-app.use("/api/tones", toneRoutes);
-app.use("/api/users", userRoutes); // Register user routes
+mongoose.connect(process.env.MONGO_URI)
+    .then(()=>console.log("MongoDB connected Successfully"))
+    .catch((err)=>console.log(err))
 
-app.listen(PORT, () => console.log(`🚀 Server running on http://localhost:${PORT}`));
+
+const ToneSchema = new mongoose.Schema({
+  toneName: String,
+  description: String,
+  audioFile: String,
+});
+
+const Tone = mongoose.model("Tone", ToneSchema);
+
+app.get("/api/tones", async (req, res) => {
+  const tones = await Tone.find();
+  res.json(tones);
+});
+
+app.post("/api/tones", async (req, res) => {
+  const newTone = new Tone(req.body);
+  await newTone.save();
+  res.status(201).json(newTone);
+});
+
+app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
