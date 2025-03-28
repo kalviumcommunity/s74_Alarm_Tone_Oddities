@@ -1,13 +1,24 @@
+// models/tone.js
 const mongoose = require("mongoose");
 
-const toneSchema = new mongoose.Schema(
-  {
-    toneName: { type: String, required: true, unique: true }, 
-    description: { type: String },
-    audioFile: { type: String, required: true }, 
+const ToneSchema = new mongoose.Schema({
+  toneName: {
+    type: String,
+    required: true,
   },
-  { timestamps: true }
-);
+  description: {
+    type: String,
+    required: true,
+  },
+  audioFile: {
+    type: String,
+    required: true,
+  },
+  created_by: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User", // Assuming you have a User model
+    required: true,
+  },
+});
 
-const Tone = mongoose.model("Tone", toneSchema);
-module.exports = Tone;
+module.exports = mongoose.model("Tone", ToneSchema);
