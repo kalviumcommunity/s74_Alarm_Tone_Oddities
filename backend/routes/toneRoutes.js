@@ -1,71 +1,78 @@
+// routes/toneRoutes.js
 const express = require("express");
+const Tone = require("../models/tone");
+const User = require("../models/user"); // Assuming you have a User model
 const router = express.Router();
-const Tone = require("../models/Tone");
 
-// GET: Retrieve all alarm tones
+// Get all tones, optionally filter by created_by
 router.get("/", async (req, res) => {
   try {
-    const tones = await Tone.find();
+    const { userId } = req.query;
+    const filter = userId ? { created_by: userId } : {};
+    const tones = await Tone.find(filter).populate("created_by", "name email");
     res.json(tones);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ message: "Error fetching tones", error });
   }
 });
 
-// GET: Retrieve a single alarm tone by ID
+// Get a specific tone by ID
 router.get("/:id", async (req, res) => {
   try {
-    const tone = await Tone.findById(req.params.id);
-    if (!tone) {
-      return res.status(404).json({ error: "Tone not found" });
-    }
-    res.status(200).json(tone);
+    const tone = await Tone.findById(req.params.id).populate("created_by", "name email");
+    if (!tone) return res.status(404).json({ message: "Tone not found" });
+    res.json(tone);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ message: "Error fetching tone", error });
   }
 });
 
-// POST: Add a new alarm tone
-router.post("/add", async (req, res) => {
+// Create a new tone
+router.post("/", async (req, res) => {
   try {
-    const { toneName, description, audioFile } = req.body;
-    if (!toneName || !audioFile) {
-      return res.status(400).json({ error: "Tone name and audio file are required" });
+    const { toneName, description, audioFile, created_by } = req.body;
+    if (!toneName || !description || !audioFile || !created_by) {
+      return res.status(400).json({ message: "All fields are required" });
     }
-    const newTone = new Tone({ toneName, description, audioFile });
+
+    // Validate if user exists
+    const userExists = await User.findById(created_by);
+    if (!userExists) {
+      return res.status(400).json({ message: "Invalid user ID" });
+    }
+
+    const newTone = new Tone({ toneName, description, audioFile, created_by });
     await newTone.save();
-    res.status(201).json({ message: "Alarm tone added successfully!", newTone });
+    res.status(201).json(newTone);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ message: "Error creating tone", error });
   }
 });
 
-// PUT: Update an existing alarm tone by ID
+// Update a tone
 router.put("/:id", async (req, res) => {
   try {
-    const { toneName, description, audioFile } = req.body;
+    const { toneName, description, audioFile, created_by } = req.body;
     const updatedTone = await Tone.findByIdAndUpdate(
       req.params.id,
-      { toneName, description, audioFile },
+      { toneName, description, audioFile, created_by },
       { new: true }
     );
-    if (!updatedTone) {
-      return res.status(404).json({ error: "Tone not found" });
-    }
-    res.status(200).json({ message: "Tone updated successfully!", updatedTone });
+    if (!updatedTone) return res.status(404).json({ message: "Tone not found" });
+    res.json(updatedTone);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ message: "Error updating tone", error });
   }
 });
 
-// DELETE: Remove an alarm tone by ID
+// Delete a tone
 router.delete("/:id", async (req, res) => {
   try {
-    const tone = await Tone.findByIdAndDelete(req.params.id);
-    if (!tone) return res.status(404).json({ error: "Tone not found" });
-    res.json({ message: "Tone deleted successfully!" });
+    const deletedTone = await Tone.findByIdAndDelete(req.params.id);
+    if (!deletedTone) return res.status(404).json({ message: "Tone not found" });
+    res.json({ message: "Tone deleted successfully" });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ message: "Error deleting tone", error });
   }
 });
 
