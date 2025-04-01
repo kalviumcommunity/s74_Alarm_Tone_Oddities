@@ -1,0 +1,22 @@
+{
+  "name": "s74_alarm_tone_oddities",
+  "version": "1.0.0",
+  "description": "Welcome to **Alarm Tone Oddities**! This quirky app lets users explore, rate, and share some of the most bizarre and peculiar alarm tones people use to wake up. From animal noises to random sound effects, you can upload your own, listen to others, and vote for the weirdest and most effective alarms!",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bcrypt": "^5.1.1",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "mongoose": "^8.12.1",
+    "mysql2": "^3.14.0",
+    "nodemon": "^3.1.9"
+  }
+}

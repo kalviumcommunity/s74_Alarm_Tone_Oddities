@@ -69,14 +69,15 @@ Welcome to **Alarm Tone Oddities**! This quirky app lets users explore, rate, an
 
 ### **Testing**
 - **Postman** for API testing.
-- **Jest** for unit and integration testing.
+- **Jest** for unit and integration testing .
 
 ### **Optional**
-- **Docker** for containerization.
+- **Docker** for containerization .
 
 ## UI Design
 
-The app has a playful, colorful, and engaging design that is intuitive and easy to use. Below are the key components of the UI:
+The app has a playful, colorful, and engaging design that is intuitive and easy to use. 
+Below are the key components of the UI:
 
 ### **Landing Page**
 - Quirky greeting: “Looking for the Weirdest Alarm Tone? You’ve Found It!”
@@ -120,3 +121,9 @@ Follow the steps below to get started with the project:
 1. Clone the repository:
    ```bash
    git clone https://github.com/yourusername/alarm-tone-oddities.git
+
+
+
+
+
+   DEPLOYMENT LINK - https://s74-alarm-tone-oddities-2.onrender.com
