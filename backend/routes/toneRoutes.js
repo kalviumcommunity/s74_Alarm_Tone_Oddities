@@ -1,6 +1,6 @@
 // routes/toneRoutes.js
 const express = require("express");
-const Tone = require("../models/tone");
+const Tone = require("../models/Tone");
 const User = require("../models/user"); // Assuming you have a User model
 const router = express.Router();
 

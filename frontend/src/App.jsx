@@ -63,7 +63,9 @@ const App = () => {
           >
             <option value="">All Users</option>
             {users.map((user) => (
-              <option key={user._id} value={user._id}>{user.name}</option>
+              <option key={user._id} value={user._id}>
+                {user.username} {/* Changed from user.name to user.username */}
+              </option>
             ))}
           </select>
         </div>

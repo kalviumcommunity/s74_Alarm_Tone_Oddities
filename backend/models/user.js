@@ -1,24 +1,62 @@
-const mongoose = require("mongoose");
-const bcrypt = require("bcrypt");
+// models/user.js
+const db = require('../config/db'); // MySQL database connection
+const bcrypt = require('bcrypt'); // For password hashing
 
-const userSchema = new mongoose.Schema(
-  {
-    username: { type: String, required: true, unique: true },
-    password: { type: String, required: true },
-  },
-  { timestamps: true }
-);
+// Mongoose-like schema with MySQL
+class User {
+  constructor(data) {
+    this.id = data.id;
+    this.username = data.username;
+    this.password = data.password;
+  }
 
-// Hash password before saving
-userSchema.pre("save", async function (next) {
-  if (!this.isModified("password")) return next();
-  this.password = await bcrypt.hash(this.password, 10);
-  next();
-});
+  // Create a new user in the MySQL database
+  static async create(username, password) {
+    try {
+      // Hash the password before saving
+      const hashedPassword = await bcrypt.hash(password, 10);
 
-// Compare hashed password
-userSchema.methods.comparePassword = async function (password) {
-  return await bcrypt.compare(password, this.password);
-};
+      const [result] = await db.execute(
+        'INSERT INTO users (username, password) VALUES (?, ?)',
+        [username, hashedPassword]
+      );
+      return new User({ id: result.insertId, username, password: hashedPassword }); // Return new user instance
+    } catch (err) {
+      throw err;
+    }
+  }
 
-module.exports = mongoose.model("User", userSchema);
+  // Find a user by their username in MySQL
+  static async findByUsername(username) {
+    try {
+      const [rows] = await db.execute(
+        'SELECT * FROM users WHERE username = ?',
+        [username]
+      );
+      if (rows.length === 0) return null; // No user found
+      return new User(rows[0]); // Return user instance
+    } catch (err) {
+      throw err;
+    }
+  }
+
+  // Compare the provided password with the hashed password
+  static async comparePassword(storedPassword, providedPassword) {
+    return await bcrypt.compare(providedPassword, storedPassword);
+  }
+
+  // Update user password (if needed)
+  static async updatePassword(userId, newPassword) {
+    try {
+      const hashedPassword = await bcrypt.hash(newPassword, 10);
+      await db.execute(
+        'UPDATE users SET password = ? WHERE id = ?',
+        [hashedPassword, userId]
+      );
+    } catch (err) {
+      throw err;
+    }
+  }
+}
+
+module.exports = User;
